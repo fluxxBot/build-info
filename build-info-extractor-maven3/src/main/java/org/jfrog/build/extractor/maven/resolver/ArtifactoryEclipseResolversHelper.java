@@ -43,9 +43,9 @@ public class ArtifactoryEclipseResolversHelper {
     List<RemoteRepository> getResolutionRepositories(RepositorySystemSession session) {
         if (resolutionRepositories.isEmpty()) {
             initResolutionHelper(session);
-            org.jfrog.build.extractor.ProxySelector proxySelector = new org.jfrog.build.extractor.ProxySelector(resolutionHelper.getHttpProxyHost(), resolutionHelper.getHttpProxyPort(), resolutionHelper.getHttpProxyUsername(), resolutionHelper.getHttpProxyPassword(), resolutionHelper.getHttpsProxyHost(), resolutionHelper.getHttpsProxyPort(), resolutionHelper.getHttpsProxyUsername(), resolutionHelper.getHttpsProxyPassword(), resolutionHelper.getNoProxy());
-            ArtifactoryResolution artifactoryResolution = new ArtifactoryResolution(resolutionHelper.getRepoReleaseUrl(), resolutionHelper.getRepoSnapshotUrl(), resolutionHelper.getRepoUsername(), resolutionHelper.getRepoPassword(), proxySelector, logger);
-            snapshotRepository = artifactoryResolution.createSnapshotRepository();
+            ArtifactoryResolution artifactoryResolution = getArtifactoryResolution();
+            snapshotRepository = artifactoryResolution.createSnapshotRepository(resolutionHelper.isSnapshotEnabled(), resolutionHelper.getSnapshotUpdatePolicy());
+            logger.error("snapshot repository is "+snapshotRepository);
             if (snapshotRepository != null) {
                 resolutionRepositories.add(snapshotRepository);
             }
@@ -55,6 +55,12 @@ public class ArtifactoryEclipseResolversHelper {
             }
         }
         return resolutionRepositories;
+    }
+
+    private ArtifactoryResolution getArtifactoryResolution() {
+        ProxySelector proxySelector = new ProxySelector(resolutionHelper.getHttpProxyHost(), resolutionHelper.getHttpProxyPort(), resolutionHelper.getHttpProxyUsername(), resolutionHelper.getHttpProxyPassword(), resolutionHelper.getHttpsProxyHost(), resolutionHelper.getHttpsProxyPort(), resolutionHelper.getHttpsProxyUsername(), resolutionHelper.getHttpsProxyPassword(), resolutionHelper.getNoProxy());
+        ArtifactoryResolution artifactoryResolution = new ArtifactoryResolution(resolutionHelper.getRepoReleaseUrl(), resolutionHelper.getRepoSnapshotUrl(), resolutionHelper.getRepoUsername(), resolutionHelper.getRepoPassword(), proxySelector, logger);
+        return artifactoryResolution;
     }
 
     private void initResolutionHelper(RepositorySystemSession session) {

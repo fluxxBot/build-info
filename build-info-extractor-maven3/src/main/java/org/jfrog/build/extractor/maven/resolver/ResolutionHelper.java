@@ -113,6 +113,10 @@ public class ResolutionHelper {
         return internalConfiguration.httpsProxy.getPassword();
     }
 
+    public boolean isSnapshotEnabled() { return internalConfiguration.resolver.isSnapshotEnabled(); }
+
+    public String getSnapshotUpdatePolicy() { return internalConfiguration.resolver.getSnapshotUpdatePolicy(); }
+
     public Logger getLogger() {
         return logger;
     }
